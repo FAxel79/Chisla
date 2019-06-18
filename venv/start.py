@@ -11,7 +11,7 @@ an = 0
 sleep = 0
 
 def get_matrix():
-    a = M.Matr(12, 12, 4)
+    a = M.Matr(12, 12, 9)
     an = a.x * a.y
     sleep = 25 * an
     return a,an,sleep
