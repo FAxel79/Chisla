@@ -4,7 +4,7 @@ class Neron:
         self.n_svyzey = n_svyzi
         self.fun = fun
         self.vesa = []
-        self.koeff = 0
+        self.koeff = 0.5
         self.shift = 0
         self.settype()
         self.out = 0
@@ -18,7 +18,8 @@ class Neron:
         for i in range(len(inp)):
             sum += self.vesa[i]*inp[i]
         if self.fun == 1:
-            return (1/(1+math.exp((-sum*self.koeff)+self.shift)))
+            self.out = (1/(1+math.exp(((-1)*sum*self.koeff)+self.shift)))
+            return self.out
         return None
     def set_ves(self,listves:list):
         for i in range(self.n_svyzey):
@@ -36,3 +37,20 @@ class Neron:
         self.koeff = random.random()-0.5
         self.shift = random.random()-0.5
         return
+    def obuch(self, inp:list, err, k_ob):
+        out = self.calc_out(inp)
+        s = 0
+        for r in inp:
+            s += abs(r)
+        ddx =[]
+        for i in range(len(inp)):
+            k = abs(inp[i]/s)
+            er = err*k
+            df = out*(1-out)
+            dx = er*k_ob/(df+0.00000001)
+            self.vesa[i] += dx
+            ddx.append(dx)
+        return ddx
+    def calc_err_nero(self, inp:list, out):
+        pass
+        return out-self.calc_out(inp)
