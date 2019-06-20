@@ -1,13 +1,14 @@
-import math, random
+import math, random, copy
 class Neron:
     def __init__(self,n_svyzi = 1, fun = 1):
         self.n_svyzey = n_svyzi
         self.fun = fun
         self.vesa = []
-        self.koeff = 0.5
+        self.koeff = 1
         self.shift = 0
         self.settype()
         self.out = 0
+        self.lastIN = []
         for i in range (self.n_svyzey):
             self.vesa.append(1)
         self.out = self.calc_out([0])
@@ -15,6 +16,7 @@ class Neron:
         pass
     def calc_out(self, inp:list = [1]):
         sum = 0
+        self.lastIN = copy.deepcopy(inp)
         for i in range(len(inp)):
             sum += self.vesa[i]*inp[i]
         if self.fun == 1:
@@ -38,18 +40,20 @@ class Neron:
         self.shift = random.random()-0.5
         return
     def obuch(self, inp:list, err, k_ob):
-        out = self.calc_out(inp)
+        out = self.out
         s = 0
-        for r in inp:
-            s += abs(r)
+        for r in range(len(inp)):
+            s += inp[r]*self.vesa[r]
         ddx =[]
         for i in range(len(inp)):
-            k = abs(inp[i]/s)
+            k = abs(inp[i]/(s+0.0000000001))
             er = err*k
-            df = out*(1-out)
-            dx = er*k_ob/(df+0.00000001)
-            self.vesa[i] += dx
-            ddx.append(dx)
+            df = (out*(1.00001-out))
+            dx = er*k_ob/(df+0.000000000)
+            kk = inp[i]*self.vesa[i]/(s+0.00001)
+            self.vesa[i] += (kk*(1/(inp[i]+0.00001))*dx)
+
+            ddx.append(kk*(1/self.vesa[i])*dx)
         return ddx
     def calc_err_nero(self, inp:list, out):
         pass
