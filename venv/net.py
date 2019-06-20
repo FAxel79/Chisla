@@ -5,58 +5,42 @@ class NetNero:
         self.topologi = topologi
         self.sloi = len(self.topologi)
         self.net = []
-        for i in range (0,self.sloi):
-            a = []
-            for j in range (self.topologi[i]):
-                nsvyz = 1 if i == 0 else self.topologi[i-1]
-                n = neron.Neron(nsvyz)
-                a.append(n)
-            self.net.append(a)
-        pass
-    def calknetout(self, inputlist:list):
-        b = []
-        for i in range (self.sloi):
-            m = []
-            for j in range(len(self.net[i])):
-                if i == 0:
-                    h = []
-                    h.append(inputlist[j])
-                    m.append(self.net[i][j].calc_out(h))
-                else:
-                    m.append(self.net[i][j].calc_out(b))
-            b = []
-            b = copy.deepcopy(m)
-        return m
-    def obuch_net(self, inputlist:list, err, k_ob):
-        mm =[]
-        b = []
+        self.netwes =[]
+        self.nerocount = 0
+        self.struktura = []
+        t = []
         for i in range(self.sloi):
-            m = []
-            for j in range(len(self.net[i])):
-                if i == 0:
-                    h = []
-                    h.append(inputlist[j])
-                    hh = self.net[i][j].calc_out(h)
-                    m.append(hh)
-                    mm.append([hh,h,i,j])
-                else:
-                    hh = self.net[i][j].calc_out(b)
-                    m.append(hh)
-                    mm.append([hh, b,i,j])
-            b = []
-            b = copy.deepcopy(m)
-        ddx = []
-        ddx2 =[]
-        ddx.append(err)
-        for i in range(self.sloi-1,-1,-1):
-            for j in range (len (self.net[i])):
-                for g in mm:
-                    if g[2] == i and g[3] == j:
-                        f= g[1]
-                        err = self.net[i][j].obuch(f,self.net[i][j].calc_err_nero(f,ddx[j]), k_ob)
-                        ddx2=copy.deepcopy(err)
-            ddx = copy.deepcopy(ddx2)
-            ddx2 =[]
+            self.struktura.append(t)
+            t = []
+        for i in range(self.sloi):
+            a = []
+            for j in range ((self.topologi[i])):
+                sv = 1 if i == 0 else self.topologi[i-1]
+                n = neron.Neron(sv)
+                n.mynomer = self.nerocount
+                n.mysloi = i
+                a.append(n)
+                self.struktura[i].append(n.mynomer)
+                self.nerocount += 1
+                self.net.append(n)
+
+        for i in range(self.nerocount):
+            t =[]
+            for j in range(self.nerocount):
+                t.append(0)
+            self.netwes.append(t)
+
+        for i in range(len(self.net)):
+            if self.net[i].mysloi == 0:
+                self.netwes[0][i] = 1
+            else:
+                for f in range (len(self.struktura[self.net[i].mysloi-1])):
+                    self.netwes[f+self.struktura[self.net[i].mysloi-1][0]][self.net[i].mynomer] = 1
+
+        pass
+    def calk_otklik(self,inn:list):
+        otv = copy.deepcopy(self.netwes)
+        for i in range (self.nerocount):
+            if self.net[i].mysloi == 0:
+                self.net[i].calc_out([inn[i]],[[self.netwes[0][i]]])
         return
-    def calc_err(self, inputlist:list, out):
-        return out - self.calknetout(inputlist)[0]
